@@ -1,7 +1,7 @@
 from flakon import JsonBlueprint
 from flask import abort, jsonify, request
 
-from bedrock_a_party.classes.party import CannotPartyAloneError, Party
+from bedrock_a_party.classes.party import CannotPartyAloneError, NotInvitedGuestError, ItemAlreadyInsertedByUser, NotExistingFoodError, Party
 
 parties = JsonBlueprint('parties', __name__)
 
@@ -79,8 +79,10 @@ def edit_foodlist(id, user, item):
             appo = Party.get_food_list(_LOADED_PARTIES[id])
             return appo.serialize()[0]
 
-        except:
+        except NotInvitedGuestError:
             abort(401)
+        except ItemAlreadyInsertedByUser:
+            abort(400)
 
 
     if 'DELETE' == request.method:
@@ -88,7 +90,7 @@ def edit_foodlist(id, user, item):
         try:
             Party.remove_from_food_list(_LOADED_PARTIES[id],item,user)
             return jsonify({"msg" : "Food deleted!"})
-        except:
+        except NotExistingFoodError:
              abort(400)
 
 
@@ -103,7 +105,6 @@ def create_party(req):
 
     # get data from request
     json_data = req.get_json()
-
 
     # list of guests
     try:
