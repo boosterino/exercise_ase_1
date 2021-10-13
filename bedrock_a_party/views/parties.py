@@ -15,7 +15,7 @@ def all_parties():
     if request.method == 'POST':
         try:
             result = create_party(request)
-        except:
+        except CannotPartyAloneError:
             abort(400)
 
 
@@ -105,7 +105,6 @@ def create_party(req):
 
     # get data from request
     json_data = req.get_json()
-
     # list of guests
     try:
         guests = json_data['guests']
