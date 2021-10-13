@@ -42,7 +42,6 @@ def single_party(id):
 
     elif 'DELETE' == request.method:
         _LOADED_PARTIES.pop(id)
-        _PARTY_NUMBER -= 1
 
     return result
 
